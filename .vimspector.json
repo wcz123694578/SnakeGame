@@ -1,0 +1,22 @@
+{
+	"configurations": {
+		"cpp:launch": {
+			"adapter": "vscode-cpptools",
+			"configuration": {
+				"name": "cpp",
+         		"type":    "cppdbg",
+         		"request": "launch",
+         		"program": "build/snake.out",
+		 		"args": ["*${ProgramArgs}"],
+         		"cwd": "${workspaceRoot}",
+         		"environment": [],
+         		"externalConsole": false,
+         		"stopAtEntry": false,
+         		"MIMode": "gdb",
+         		"logging": {
+					"engineLogging": false
+				}
+			}
+		}
+	}
+}

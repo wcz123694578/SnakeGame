@@ -1,0 +1,8 @@
+{
+    "files.associations": {
+        "snake.h": "c",
+        "map.h": "c",
+        "malloc.h": "c",
+        "stdbool.h": "c"
+    }
+}
