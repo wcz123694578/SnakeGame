@@ -3,6 +3,7 @@
 #include "snake.h"
 #include "map.h"
 #include "control.h"
+#include "global.h"
 
 int main() {
 	init_snake(&snake);
@@ -10,7 +11,9 @@ int main() {
 	map[3][6].is_coin = true;
 	snake_push();
 	snake_push();
-	control_entry();
+	while (state != Exit) {
+		control_entry();
+	}
 
 	getchar();
 	return 0;

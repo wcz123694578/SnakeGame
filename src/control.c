@@ -6,6 +6,7 @@
 #include <unistd.h>
 #include <stdio.h>
 #include <sys/time.h>
+#include <stdlib.h>
 
 extern snake_t *snake;
 extern snake_t *head;
@@ -76,28 +77,64 @@ static void move(SpinType *direction_ptr) {
 extern map_t map[20][20];
 
 void control_entry() {
-	init_terminal();
 	SpinType direction = head->spin_direction;
 
+	state = Start;
+
 	while (true) {
+		init_terminal();
 		if (		head->x < 0 || head->x >= 20 
 				||	head->y < 0 || head->y >= 20) {
 			printf("You lose!\n");
-			break;
+			state = Over;
+		} else {
+			snake = tail;
+			int flag = 0;
+			while (snake && snake != head) {
+				if (head->x == snake->x && head->y == snake->y) {
+					flag = 1;
+					break;
+				}
+				snake = snake->next;
+			}
+			if (flag) {
+				printf("you lose!\n");
+				state = Over;
+			}
 		}
 
-		snake = tail;
-		int flag = 0;
-		while (snake && snake != head) {
-			if (head->x == snake->x && head->y == snake->y) {
-				flag = 1;
-				break;
+		if (state == Over) {
+			char op;
+
+			// Delete snake
+			snake = tail;
+			while (snake) {
+				snake_t *free_node = snake;
+				snake = snake->next;
+				free(free_node);
 			}
-			snake = snake->next;
-		}
-		if (flag) {
-			printf("you lose!\n");
-			break;
+			snake = NULL;
+
+			init_snake(&snake);
+			snake_push();
+			snake_push();
+
+			while (true) {
+				reset_terminal();
+				printf("Do you want to play again? [y/n]> ");
+				fflush(stdout);
+				op = fgetc(stdin);
+				while (getchar() != '\n');
+				
+				if (op == 'y') {
+					state = Start;
+				} else if (op == 'n') {
+					state = Exit;
+				} else {
+					continue;
+				}
+				return;
+			}
 		}
 
 		move(&direction);
@@ -115,7 +152,7 @@ void control_entry() {
 
 		usleep(200000);
 		
+		reset_terminal();
 	}
-	reset_terminal();
 }
 
