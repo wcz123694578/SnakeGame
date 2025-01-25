@@ -5,6 +5,13 @@
 #include <stdlib.h>
 #include <time.h>
 
+#define RESET "\033[0m"
+#define SNAKE_HEAD "\033[42m"
+#define SNAKE_BODY "\033[44m"
+#define BG_GRAY "\033[100m"
+#define BG_BROWN "\033[43m"
+#define BG_BORDER "\033[45m"
+
 map_t map[20][20] = { 0 };
 
 void init_map() {
@@ -25,51 +32,55 @@ void refresh_coin(int cur_x, int cur_y) {
 	map[new_x][new_y].is_coin = true;
 }
 
+static void gotoxy(int x, int y) {
+	printf("\033[%d;%dH", x, y);
+}
+
 void draw_map() {
-	printf("\033[2J");      // 清屏
-    printf("\033[H");       // 将光标移动到左上角
-									
 	for (int i = 0; i < 22; i++) {
-		printf("=");
+		gotoxy(1, i * 2 + 1);
+		printf(BG_BORDER "  " RESET);
 	}
 	printf("\n");
 
 	// 循环输出
 	for (int i = 0; i < 20; i++) {
-		printf("|");
+		gotoxy(i + 2, 1);
+		printf(BG_BORDER "  " RESET);
 		for (int j = 0; j < 20; j++) {
 			snake = tail;
+			gotoxy(i + 2, (j + 1) * 2 + 1);
 			if (map[i][j].is_coin) {
-				printf("o");
+				printf(BG_BROWN "  " RESET);
 			} else {
-				printf(" ");
+				printf(BG_GRAY "  " RESET);
 			}
 
 			while (snake) {
 				if (snake->x == j && snake->y == i) {
+					gotoxy(i + 2, (j + 1) * 2 + 1);
 					if (snake == head)
-						printf("\b#");
+						printf(SNAKE_HEAD "  " RESET);
 					else
-						printf("\b*");
+						printf(SNAKE_BODY "  " RESET);
 					break;
 				}
 				snake = snake->next;
 			}
 		}
-		printf("|\n");
+		gotoxy(i + 2, 21 * 2 + 1);
+		printf(BG_BORDER "  " RESET);
 	}
 
 	for (int i = 0; i < 22; i++) {
-		printf("=");
+		gotoxy(22, i * 2 + 1);
+		printf(BG_BORDER "  " RESET);
 	}
 
-	printf("\n\n");
+	gotoxy(3, 27 * 2 + 1);
 
-	for (int i = 0; i < 40; i++) {
-		printf("=");
-	}
-
-	printf("\n\nGAME PANEL\n");
+	printf("GAME PANEL");
+	gotoxy(4, 27 * 2 + 1);
 	printf("Score: %d", score);
 
 	printf("\n");

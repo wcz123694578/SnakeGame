@@ -15,6 +15,10 @@ int main() {
 		control_entry();
 	}
 
+	printf("============================\n");
+
+	printf("GAME OVER!\n");
+
 	getchar();
 	return 0;
 }
