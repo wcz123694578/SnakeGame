@@ -76,32 +76,40 @@ static void move(SpinType *direction_ptr) {
 
 extern map_t map[20][20];
 
+static void judge_is_lose() {
+	if (		head->x < 0 || head->x >= 20 
+			||	head->y < 0 || head->y >= 20) {
+		printf("You lose!\n");
+		state = Over;
+	} else {
+		snake = tail;
+		int flag = 0;
+		while (snake && snake != head) {
+			if (head->x == snake->x && head->y == snake->y) {
+				flag = 1;
+				break;
+			}
+			snake = snake->next;
+		}
+		if (flag) {
+			printf("you lose!\n");
+			state = Over;
+		}
+	}
+
+}
+
 void control_entry() {
 	SpinType direction = head->spin_direction;
 
 	state = Start;
+	printf("\033[2J");      // 清屏
+    printf("\033[H");       // 将光标移动到左上角
 
 	while (true) {
 		init_terminal();
-		if (		head->x < 0 || head->x >= 20 
-				||	head->y < 0 || head->y >= 20) {
-			printf("You lose!\n");
-			state = Over;
-		} else {
-			snake = tail;
-			int flag = 0;
-			while (snake && snake != head) {
-				if (head->x == snake->x && head->y == snake->y) {
-					flag = 1;
-					break;
-				}
-				snake = snake->next;
-			}
-			if (flag) {
-				printf("you lose!\n");
-				state = Over;
-			}
-		}
+
+		judge_is_lose();
 
 		if (state == Over) {
 			char op;
@@ -125,7 +133,7 @@ void control_entry() {
 				fflush(stdout);
 				op = fgetc(stdin);
 				while (getchar() != '\n');
-				
+
 				if (op == 'y') {
 					state = Start;
 				} else if (op == 'n') {
@@ -150,7 +158,7 @@ void control_entry() {
 
 		draw_map();
 
-		usleep(200000);
+		usleep(100000);
 		
 		reset_terminal();
 	}
